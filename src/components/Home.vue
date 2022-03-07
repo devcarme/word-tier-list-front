@@ -13,17 +13,22 @@
       <tr>
           <td><input type="text" v-model="name" placeholder="Name" /></td>
           <td><input type="text" v-model="definition" placeholder="Definition" /></td>
-          <td><input type="number" v-model="tier" placeholder="Tier" /></td>
+          <td><input type="number" min="0" v-model="tier" placeholder="Tier" /></td>
           <button v-on:click="addWord">Add</button>
+      </tr>
+      <tr v-if="errorMessage !== ''">
+        <td colspan="4">
+          <p class="error-message">{{errorMessage}}</p>
+        </td>
       </tr>
       </thead>
       <tbody v-bind:key="word._id" v-for="word in words">
         <tr class="word">
-          <td class="word-name"> <input type="text"  v-model="nameEdit" :placeholder="word.name"   />{{ word.nameEdit }}</td>
-          <td class="word-definition"><input type="text" v-model="definitionEdit" :placeholder="word.definition" disabled="disabledForm"/> {{ word.definitionEdit }}</td>
-          <td class="word-tier"><input type="text" v-model="tierEdit" :placeholder="word.tier" disabled="disabledForm"/> {{ word.tierEdit }}</td>
+          <td class="word-name"> <input type="text"  v-model="word.name" :placeholder="word.name"   /></td>
+          <td class="word-definition"><input type="text" v-model="word.definition" :placeholder="word.definition"/></td>
+          <td class="word-tier"><input type="number" min="0" v-model="word.tier" :placeholder="word.tier"/></td>
           <button class="btn-remove" v-on:click="removeWord(word._id)">Remove</button>
-          <button class="btn-edit" v-on:click="editWord(word._id)">Edit</button>
+          <button class="btn-edit" v-on:click="editWord(word)">Edit</button>
         </tr>
       </tbody>
     </table>
@@ -38,14 +43,12 @@ export default {
   data() {
     return {
       msg: 'Word Tier List',
+      errorMessage: '',
       words: [],
       name: '',
       definition: '',
       tier: '',
-      nameEdit: '',
-      definitionEdit: '',
-      tierEdit: '',
-      disabledForm: true,
+      disabledForm: true
     }
   },
   mounted() {
@@ -56,22 +59,29 @@ export default {
         this.name = '';
         this.definition = '';
         this.tier = '';
-        fetch('http://127.0.0.1:5000/words')
+        fetch(process.env.VUE_APP_API_BASE_URL + "words")
         .then(response => response.json())
         .then(data => {
           // eslint-disable-next-line vue/no-mutating-props
           this.words = data;
         })
+        .catch(error => {
+          if (error.message === 'Failed to fetch') {
+            this.errorMessage = 'Le serveur est inaccessible';
+          } else {
+            this.errorMessage = error.message;
+          }
+        });
     },
     async removeWord(word_id) {
-      fetch('http://127.0.0.1:5000/words/' + word_id, {
-        method: 'DELETE'
+      fetch(process.env.VUE_APP_API_BASE_URL + "words/" + word_id, {
+        method: 'DELETE',
       })
           .then(response => response.json())
           .then(this.getAllWords)
     },
     async addWord() {
-      fetch('http://127.0.0.1:5000/words', {
+      fetch(process.env.VUE_APP_API_BASE_URL + "words", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,24 +95,32 @@ export default {
       })
           .then(response => response.json())
           .then(this.getAllWords)
-          .catch(error => console.error(error))
+          .catch(error => {
+            if (error.message === 'Failed to fetch') {
+              this.errorMessage = 'Le serveur est inaccessible';
+            } else {
+              this.errorMessage = error.message;
+            }
+          });
     },
-    async editWord() {
-      fetch('http://127.0.0.1:5000/words', {
+    async editWord(word) {
+      fetch(process.env.VUE_APP_API_BASE_URL + "words", {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          name: this.name,
-          definition: this.definition,
-          tier: this.tier
-        })
+        body: JSON.stringify({word})
       })
           .then(response => response.json())
           .then(this.getAllWords)
-          .catch(error => console.error(error))
+          .catch(error => {
+            if (error.message === 'Failed to fetch') {
+              this.errorMessage = 'Le serveur est inaccessible';
+            } else {
+              this.errorMessage = error.message;
+            }
+          });
     },
   }
 }
@@ -172,12 +190,11 @@ input {
   width: 100%;
 }
 input[type="number"] {
-  width: 50px;
+  width: 85%;
   border: 1px solid #42b983;
   border-radius: 5px;
   padding: 5px;
 }
-/*Input styled for the word list*/
 input[type="text"] {
   width: 85%;
   border: 1px solid #42b983;
@@ -185,5 +202,9 @@ input[type="text"] {
   padding: 10px;
   height: 30px;
 }
-
+.error-message {
+  color: red;
+  font-size: 24px;
+  text-align: center;
+}
 </style>
