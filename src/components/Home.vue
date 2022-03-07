@@ -160,6 +160,7 @@ button {
   border-radius: 5px;
   margin: 10px;
   cursor: pointer;
+  font-size: 20px;
 }
 .btn-remove {
   background-color: #ff0000;
@@ -185,10 +186,11 @@ input {
   width: 100%;
 }
 input[type="number"] {
-  width: 85%;
+  width: 80%;
   border: 1px solid #42b983;
   border-radius: 5px;
   padding: 5px;
+  font-size: 20px;
 }
 input[type="text"] {
   width: 90%;
@@ -204,7 +206,7 @@ input[type="text"] {
   text-align: center;
 }
 .tier-column {
-  width: 60px;
+  width: 78px;
 }
 .actions-column {
   width: 200px;
