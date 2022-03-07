@@ -3,6 +3,10 @@
     <h1>{{ msg }}</h1>
     <div class="main-content">
     <table class="word-list">
+      <col class="word-column">
+      <col class="definition-column">
+      <col class="tier-column">
+      <col class="actions-column">
       <thead>
         <tr>
           <th>Word</th>
@@ -12,7 +16,7 @@
         </tr>
       <tr>
           <td><input type="text" v-model="name" placeholder="Name" /></td>
-          <td><input type="text" v-model="definition" placeholder="Definition" /></td>
+          <td class="word-definition"><input type="text" v-model="definition" placeholder="Definition" /></td>
           <td><input type="number" min="0" v-model="tier" placeholder="Tier" /></td>
           <button v-on:click="addWord">Add</button>
       </tr>
@@ -177,15 +181,6 @@ button {
   background-color: #42b983;
   color: white;
 }
-.word-name {
-  width: 20%;
-}
-.word-definition {
-  width: 40%;
-}
-.word-tier {
-  width: 20%;
-}
 input {
   width: 100%;
 }
@@ -196,15 +191,41 @@ input[type="number"] {
   padding: 5px;
 }
 input[type="text"] {
-  width: 85%;
+  width: 90%;
   border: 1px solid #42b983;
   border-radius: 5px;
   padding: 10px;
   height: 30px;
+  font-size: 20px;
 }
 .error-message {
   color: red;
   font-size: 24px;
   text-align: center;
+}
+.tier-column {
+  width: 60px;
+}
+.actions-column {
+  width: 200px;
+}
+.word-column {
+  width: 200px;
+}
+.word-definition input[type="text"] {
+  width: 98%;
+}
+.btn-edit {
+  background-color: orange;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px;
+  cursor: pointer;
+}
+/*Add hover effect on button*/
+button:hover {
+  opacity: 0.8;
 }
 </style>
